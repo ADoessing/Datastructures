@@ -124,6 +124,38 @@ public class Assignment1 {
             return min;
         }
 
+        public int findKLargest (int [] num, int k) {
+            int start = 0; int end = num.length -1; int index = num.length -k;
+            while (start < end) {
+                int pivot = partion(num, start, end);
+                if (pivot < index) {
+                    start = pivot +1;
+                } else if (pivot > index) {
+                    end = pivot -1;
+                } else return num[pivot];
+            }
+            return num[start];
+        }
+
+        private int partion(int[] nums, int start, int end) {
+            int pivot = start, temp;
+            while (start <= end) {
+                while (start <= end && nums[start] <= nums[pivot]) {start++;}
+                while (start <= end && nums[end] > nums[pivot]) {end--;}
+
+                if (start > end) {
+                    break;
+                }
+                temp = nums[start];
+                nums[start] = nums[end];
+                nums[end] = temp;
+            }
+            temp = nums[end];
+            nums[end] = nums[pivot];
+            nums[pivot] = temp;
+            return end;
+        }
+
     }
 
 
@@ -144,9 +176,13 @@ public class Assignment1 {
         }
 
         counter++;
-        System.out.println(counter);
+        System.out.println("Actual: " + counter);
         counter=0;
         return smallestElement[k-1];
+    }
+
+    private int problem2(){
+        return 0;
     }
 
 
@@ -159,9 +195,9 @@ public class Assignment1 {
             for (int j = 0; j < array.length; j++) {
                 array[j] = (int)(Math.random() * 10 * size);
             }
+            System.out.println("Expected: " + (size*i)*Math.log(size*i));
             this.problem1(array, size/100);
         }
-
     }
 
 
