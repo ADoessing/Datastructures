@@ -156,6 +156,50 @@ public class Assignment1 {
             return end;
         }
 
+        public void swap(int[] array, int start, int end){
+            int temp = array[end];
+            array[end] = array[start];
+            array[start] = temp;
+        }
+
+        private void insertionSort(int[] a, int left, int right) {
+            for (int i = left+1; i < right; ++i) {
+                int key = a[i];
+                int j = i - 1;
+
+                while (j >= left && a[j] > key) {
+                    a[j + 1] = a[j];
+                    j = j - 1;
+                }
+                a[j + 1] = key;
+            }
+        }
+
+        private int median3(int[] a, int left, int right){
+            int center = (left + right) / 2;
+            if (a[center] < a[left]){
+                swap(a, left, center);
+            }
+            if (a[right] < a[left]) {
+                swap(a, left, right);
+            }
+            if (a[right] > a[center]){
+                swap(a, right, center);
+            }
+            swap(a, center, right -1);
+
+            return a[right-1];
+
+        }
+
+        public int[] makeRandomArray(int Size) {
+            int[] Array = new int[Size];
+            for (int i = 0; i <Array.length ; i++) {
+                Array[i] = (int)(Math.random() * size);
+            }
+            return Array;
+        }
+
     }
 
 
@@ -176,8 +220,8 @@ public class Assignment1 {
         }
 
         counter++;
-        System.out.println("Actual: " + counter);
-        counter=0;
+        System.out.println("Count: " + counter);
+        //counter=0;
         return smallestElement[k-1];
     }
 
@@ -190,15 +234,25 @@ public class Assignment1 {
         int size = 1000;
         int[] array;
 
-        for (int i = 1; i < 1000; i++) {
+        for (int i = 1; i < 2000; i++) {
             array = new int[size*i];
             for (int j = 0; j < array.length; j++) {
                 array[j] = (int)(Math.random() * 10 * size);
             }
-            System.out.println("Expected: " + (size*i)*Math.log(size*i));
-            this.problem1(array, size/100);
+
+            System.out.print("\t ArraySize: " + array.length );
+            System.out.print("\t K'th smallest element: " + this.problem1(array, size/100));
+
+            double logn = Math.log(array.length)/Math.log(2); // Laver naturlig logaritme om til Log2
+            double ratio = counter / (array.length*logn); // Ratio mellem forventet gennemløb & faktisk gennemløb
+            System.out.print("\t" +ratio);
+            counter=0;
         }
     }
+
+
+
+
 
 
     private void problem2Testing(){
