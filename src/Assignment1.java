@@ -3,7 +3,6 @@ public class Assignment1 {
     public static int counter;
 
     private class PriorityQueue{
-
         int[] array;
         int size;
         int arraySize;
@@ -124,83 +123,94 @@ public class Assignment1 {
             return min;
         }
 
-        public int findKLargest (int [] num, int k) {
-            int start = 0; int end = num.length -1; int index = num.length -k;
-            while (start < end) {
-                int pivot = partion(num, start, end);
-                if (pivot < index) {
-                    start = pivot +1;
-                } else if (pivot > index) {
-                    end = pivot -1;
-                } else return num[pivot];
-            }
-            return num[start];
-        }
+    }
 
-        private int partion(int[] nums, int start, int end) {
-            int pivot = start, temp;
-            while (start <= end) {
-                while (start <= end && nums[start] <= nums[pivot]) {start++;}
-                while (start <= end && nums[end] > nums[pivot]) {end--;}
+    private static final int CUTOFF = 20;
 
-                if (start > end) {
+    private void quickSelect (int[] a, int left, int right, int k) {
+        if (left + CUTOFF <= right){
+            int pivot = median3(a, left, right);
+            int i = left, j = right -1;
+            counter+= 2;
+
+            for(;;){
+                while(a[++i] < pivot){
+                counter++;
+                }
+                while (a[--j] > pivot) {
+                counter++;
+                }
+                if (i <j){
+                    counter++;
+                    swap(a, i ,j);
+                } else {
                     break;
                 }
-                temp = nums[start];
-                nums[start] = nums[end];
-                nums[end] = temp;
             }
-            temp = nums[end];
-            nums[end] = nums[pivot];
-            nums[pivot] = temp;
-            return end;
-        }
-
-        public void swap(int[] array, int start, int end){
-            int temp = array[end];
-            array[end] = array[start];
-            array[start] = temp;
-        }
-
-        private void insertionSort(int[] a, int left, int right) {
-            for (int i = left+1; i < right; ++i) {
-                int key = a[i];
-                int j = i - 1;
-
-                while (j >= left && a[j] > key) {
-                    a[j + 1] = a[j];
-                    j = j - 1;
-                }
-                a[j + 1] = key;
+            counter++;
+            swap(a, i, right -1);
+            if (k<= i){
+                counter++;
+                quickSelect(a, left, i-1, k);
+            } else if (k > i + 1) {
+                counter++;
+                quickSelect(a, i+1, right, k);
             }
         }
-
-        private int median3(int[] a, int left, int right){
-            int center = (left + right) / 2;
-            if (a[center] < a[left]){
-                swap(a, left, center);
-            }
-            if (a[right] < a[left]) {
-                swap(a, left, right);
-            }
-            if (a[right] > a[center]){
-                swap(a, right, center);
-            }
-            swap(a, center, right -1);
-
-            return a[right-1];
-
+        else {
+            counter++;
+            insertionSort(a, left, right);
         }
+    }
 
-        public int[] makeRandomArray(int Size) {
-            int[] Array = new int[Size];
-            for (int i = 0; i <Array.length ; i++) {
-                Array[i] = (int)(Math.random() * size);
+    public void swap(int[] array, int start, int end){
+        int temp = array[end];
+        array[end] = array[start];
+        array[start] = temp;
+        counter+= 3;
+    }
+
+    private void insertionSort(int[] a, int left, int right) {
+        for (int i = left+1; i < right; ++i) {
+            int key = a[i];
+            int j = i - 1;
+            counter+=2;
+            while (j >= left && a[j] > key) {
+                a[j + 1] = a[j];
+                j = j - 1;
+                counter+=2;
             }
-            return Array;
+            a[j + 1] = key;
+            counter++;
         }
+    }
+
+    private int median3(int[] a, int left, int right){
+        int center = (left + right) / 2;
+        if (a[center] < a[left]){
+            swap(a, left, center);
+        }
+        if (a[right] < a[left]) {
+            swap(a, left, right);
+        }
+        if (a[right] > a[center]){
+            swap(a, right, center);
+        }
+        swap(a, center, right -1);
+
+        return a[right-1];
 
     }
+
+
+    public int[] makeRandomArray(int Size) {
+        int[] Array = new int[Size];
+        for (int i = 0; i <Array.length ; i++) {
+            Array[i] = (int)(Math.random() * Size);
+        }
+        return Array;
+    }
+
 
 
     private int problem1 (int[] intArray, int k){
@@ -220,15 +230,10 @@ public class Assignment1 {
         }
 
         counter++;
-        System.out.println("Count: " + counter);
+        System.out.print("\t Count: " + counter);
         //counter=0;
         return smallestElement[k-1];
     }
-
-    private int problem2(){
-        return 0;
-    }
-
 
     private void problem1Testing(){
         int size = 1000;
@@ -236,34 +241,41 @@ public class Assignment1 {
 
         for (int i = 1; i < 2000; i++) {
             array = new int[size*i];
-            for (int j = 0; j < array.length; j++) {
-                array[j] = (int)(Math.random() * 10 * size);
-            }
+                for (int j = 0; j < array.length; j++) {
+                    array[j] = (int)(Math.random() * 10 * size);
+                }
 
-            System.out.print("\t ArraySize: " + array.length );
-            System.out.print("\t K'th smallest element: " + this.problem1(array, size/100));
+                System.out.print("\t ArraySize: " + array.length );
+                System.out.print("\t K'th smallest element: " + this.problem1(array, size/100));
 
-            double logn = Math.log(array.length)/Math.log(2); // Laver naturlig logaritme om til Log2
-            double ratio = counter / (array.length*logn); // Ratio mellem forventet gennemløb & faktisk gennemløb
-            System.out.print("\t" +ratio);
-            counter=0;
+                double logn = Math.log(array.length)/Math.log(2); // Laver naturlig logaritme om til 2 tals Logaritme
+                double ratio = counter / (array.length*logn); // Ratio mellem counter og N*log(N)
+                System.out.print("\t Ratio: " + ratio +"\n");
+                counter=0;
         }
     }
 
-
-
-
-
-
     private void problem2Testing(){
-
+        for (int i = 0; i < 2000; i++) {
+            int size = i * 1000;
+            for (int j = 0; j < 100; j++) {
+                int[] array = this.makeRandomArray(i*1000);
+                quickSelect(array, 0, array.length -1, i*10);
+            }
+            double ratio = 1.0 * counter / (size * 100);
+            System.out.println("Ratio: " + ratio + " Array length: " + size);
+            counter = 0;
+        }
     }
 
 
     public static void main(String[] args) {
 
         Assignment1 problems = new Assignment1();
+        System.out.println("****************************** Problem 1 ******************************");
         problems.problem1Testing();
+        System.out.println("****************************** Problem 2 ******************************");
+        problems.problem2Testing();
     }
 
 
